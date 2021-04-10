@@ -1,5 +1,5 @@
 Class {
-	#name : #SpHelpBrowser,
+	#name : #SpHelpBrowserPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
 		'loadedTopicList',
@@ -14,7 +14,7 @@ Class {
 }
 
 { #category : #specs }
-SpHelpBrowser class >> defaultSpec [
+SpHelpBrowserPresenter class >> defaultSpec [
 
 	 ^ SpBoxLayout newTopToBottom
 			add: (SpPanedLayout newLeftToRight
@@ -25,13 +25,13 @@ SpHelpBrowser class >> defaultSpec [
 ]
 
 { #category : #examples }
-SpHelpBrowser class >> open [
+SpHelpBrowserPresenter class >> open [
 	<example>
 	^ self new openWithSpec
 ]
 
 { #category : #examples }
-SpHelpBrowser class >> openOn: aHelpTopic [
+SpHelpBrowserPresenter class >> openOn: aHelpTopic [
 	"Open the receiver on the given help topic or any other object that can be transformed into
 	 a help topic by sending #asHelpTopic."
 	"SpHelpBrowser openOn: SystemHelp"
@@ -43,32 +43,35 @@ SpHelpBrowser class >> openOn: aHelpTopic [
 ]
 
 { #category : #initialization }
-SpHelpBrowser >> connectPresenters [
-
-	loadedTopicList whenChangedSend: #render to: self.  
+SpHelpBrowserPresenter >> connectPresenters [
+ 
 	loadedTopicList
-		whenSelectionChangedDo: [ :selection | self render ].
+		whenSelectionChangedDo: [ :selection | 
+					| text |
+					text := selection selectedItem contents.
+					text ifNotNil: [ 
+							self render: text ]].
 ]
 
 { #category : #utils }
-SpHelpBrowser >> dummyHelp [
+SpHelpBrowserPresenter >> dummyHelp [
 
 	^  '# Empty Help
 	This a dummy help.'
 ]
 
 { #category : #actions }
-SpHelpBrowser >> helpTopic [
+SpHelpBrowserPresenter >> helpTopic [
 	^ helpTopicCache ifNil: [ helpTopicCache := SystemHelp asHelpTopic ]
 ]
 
 { #category : #initialization }
-SpHelpBrowser >> initialExtent [
+SpHelpBrowserPresenter >> initialExtent [
 	^ 800@600
 ]
 
 { #category : #initialization }
-SpHelpBrowser >> initializePresenters [
+SpHelpBrowserPresenter >> initializePresenters [
 
 	super initializePresenters.
 	loadedTopicList := self newTree.
@@ -90,37 +93,50 @@ SpHelpBrowser >> initializePresenters [
 ]
 
 { #category : #utils }
-SpHelpBrowser >> morphWriter [ 
+SpHelpBrowserPresenter >> morphWriter [ 
 		
 	^ PRRichTextComposer new
 ]
 
 { #category : #utils }
-SpHelpBrowser >> parser [ 
+SpHelpBrowserPresenter >> parser [ 
 	^ MicroDownParser
 ]
 
 { #category : #utils }
-SpHelpBrowser >> render [
+SpHelpBrowserPresenter >> render [
 
 	| document |	
 	document := self parser parse: self dummyHelp.
 	textOutput morph setText: (self morphWriter start: document asPillar) 
 ]
 
+{ #category : #utils }
+SpHelpBrowserPresenter >> render: aString [
+
+	| document text |
+	aString 
+		ifNil: [ text := self dummyHelp ]
+		ifNotNil: [ text := aString ].
+	 document := [ self parser parse: text ] 
+							on: MicParsingError
+							do: [ :ex | textOutput morph setText: text. ^ self ].
+	textOutput morph setText: (self morphWriter start: document asPillar) 
+]
+
 { #category : #accessing }
-SpHelpBrowser >> rootTopic [
+SpHelpBrowserPresenter >> rootTopic [
 
 	^ rootTopic
 ]
 
 { #category : #accessing }
-SpHelpBrowser >> rootTopic: anObject [
+SpHelpBrowserPresenter >> rootTopic: anObject [
 
 	rootTopic := anObject
 ]
 
 { #category : #initialization }
-SpHelpBrowser >> title [
+SpHelpBrowserPresenter >> title [
 	^ 'Help Topic Browser'
 ]
