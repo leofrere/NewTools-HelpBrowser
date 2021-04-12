@@ -1,3 +1,8 @@
+"
+I'm the equivalent of the old HelpBrowser but written in Spec2.
+I manage doc that are expressed as methods of certain classes but contrary to the old 
+help browser I managed documentation written using Microdown.
+"
 Class {
 	#name : #SpHelpBrowserPresenter,
 	#superclass : #SpPresenter,
