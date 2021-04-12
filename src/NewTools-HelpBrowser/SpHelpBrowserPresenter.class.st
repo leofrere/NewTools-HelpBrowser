@@ -54,8 +54,7 @@ SpHelpBrowserPresenter >> connectPresenters [
 		whenSelectionChangedDo: [ :selection | 
 					| text |
 					text := selection selectedItem contents.
-					text ifNotNil: [ 
-							self render: text ]].
+					text ifNotNil: [ self render: text ]].
 ]
 
 { #category : #utils }
@@ -67,6 +66,7 @@ SpHelpBrowserPresenter >> dummyHelp [
 
 { #category : #actions }
 SpHelpBrowserPresenter >> helpTopic [
+	
 	^ helpTopicCache ifNil: [ helpTopicCache := SystemHelp asHelpTopic ]
 ]
 
@@ -106,14 +106,6 @@ SpHelpBrowserPresenter >> morphWriter [
 { #category : #utils }
 SpHelpBrowserPresenter >> parser [ 
 	^ MicroDownParser
-]
-
-{ #category : #utils }
-SpHelpBrowserPresenter >> render [
-
-	| document |	
-	document := self parser parse: self dummyHelp.
-	textOutput morph setText: (self morphWriter start: document asPillar) 
 ]
 
 { #category : #utils }
