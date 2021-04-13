@@ -32,7 +32,8 @@ SpHelpBrowserPresenter class >> defaultSpec [
 { #category : #examples }
 SpHelpBrowserPresenter class >> open [
 	<example>
-	^ self new openWithSpec
+	
+	^ self openOn: SystemHelp
 ]
 
 { #category : #examples }
@@ -41,10 +42,9 @@ SpHelpBrowserPresenter class >> openOn: aHelpTopic [
 	 a help topic by sending #asHelpTopic."
 	"SpHelpBrowser openOn: SystemHelp"
 	
-	^self new
-		rootTopic: aHelpTopic;
-		openWithSpec;
-		yourself
+	^ (self on: aHelpTopic)
+			openWithSpec;
+			yourself
 ]
 
 { #category : #initialization }
@@ -67,7 +67,7 @@ SpHelpBrowserPresenter >> dummyHelp [
 { #category : #actions }
 SpHelpBrowserPresenter >> helpTopic [
 	
-	^ helpTopicCache ifNil: [ helpTopicCache := SystemHelp asHelpTopic ]
+	^ helpTopicCache ifNil: [ helpTopicCache := rootTopic asHelpTopic ]
 ]
 
 { #category : #initialization }
@@ -78,7 +78,6 @@ SpHelpBrowserPresenter >> initialExtent [
 { #category : #initialization }
 SpHelpBrowserPresenter >> initializePresenters [
 
-	super initializePresenters.
 	loadedTopicList := self newTree.
 	loadedTopicList 
 		roots: { self helpTopic };
@@ -131,6 +130,12 @@ SpHelpBrowserPresenter >> rootTopic [
 SpHelpBrowserPresenter >> rootTopic: anObject [
 
 	rootTopic := anObject
+]
+
+{ #category : #initialization }
+SpHelpBrowserPresenter >> setModelBeforeInitialization: anHelpTopic [
+
+	rootTopic := anHelpTopic
 ]
 
 { #category : #initialization }
