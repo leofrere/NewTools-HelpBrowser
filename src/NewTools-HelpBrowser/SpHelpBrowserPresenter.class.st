@@ -64,7 +64,7 @@ SpHelpBrowserPresenter >> dummyHelp [
 	This a dummy help.'
 ]
 
-{ #category : #actions }
+{ #category : #accessing }
 SpHelpBrowserPresenter >> helpTopic [
 	
 	^ helpTopicCache ifNil: [ helpTopicCache := rootTopic asHelpTopic ]
@@ -97,17 +97,11 @@ SpHelpBrowserPresenter >> initializePresenters [
 ]
 
 { #category : #utils }
-SpHelpBrowserPresenter >> morphWriter [ 
-		
-	^ PRRichTextComposer new
-]
-
-{ #category : #utils }
 SpHelpBrowserPresenter >> parser [ 
 	^ MicroDownParser
 ]
 
-{ #category : #utils }
+{ #category : #actions }
 SpHelpBrowserPresenter >> render: aString [
 
 	| document text |
@@ -117,7 +111,13 @@ SpHelpBrowserPresenter >> render: aString [
 	 document := [ self parser parse: text ] 
 							on: MicParsingError
 							do: [ :ex | textOutput morph setText: text. ^ self ].
-	textOutput morph setText: (self morphWriter start: document asPillar) 
+	textOutput morph setText: (self richTextRenderer start: document asPillar) 
+]
+
+{ #category : #utils }
+SpHelpBrowserPresenter >> richTextRenderer [ 
+		
+	^ PRRichTextComposer new
 ]
 
 { #category : #accessing }
