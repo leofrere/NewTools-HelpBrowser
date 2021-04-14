@@ -49,6 +49,17 @@ SpHelpBrowserPresenter class >> open [
 ]
 
 { #category : #examples }
+SpHelpBrowserPresenter class >> openDisc [
+	<example>
+	
+	| working |
+	working := FileSystem disk workingDirectory/'doc'.
+	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ]. 
+	^ self openOn: (SystemHelp asHelpTopic addSubtopic: (working asHelpTopic)) owner.
+ 	
+]
+
+{ #category : #examples }
 SpHelpBrowserPresenter class >> openOn: aHelpTopic [
 	"Open the receiver on the given help topic or any other object that can be transformed into
 	 a help topic by sending #asHelpTopic."
