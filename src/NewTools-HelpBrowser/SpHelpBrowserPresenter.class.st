@@ -64,7 +64,7 @@ SpHelpBrowserPresenter class >> open [
 ]
 
 { #category : #examples }
-SpHelpBrowserPresenter class >> openDisc [
+SpHelpBrowserPresenter class >> openDoc [
 	<example>
 	
 	| working visitor |

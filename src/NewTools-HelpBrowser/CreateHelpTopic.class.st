@@ -13,7 +13,7 @@ CreateHelpTopic >> visitFileReferenceDirectory: aDirectory [
 	subTopics := childrens collect: [ :each |
 				| file |
 				file := each asFileReference.
-				file asHelpTopic ].
+				file acceptVisitor: self ].
 	^ rootTopic subtopics: subTopics
 	
 ]
