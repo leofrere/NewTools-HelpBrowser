@@ -47,7 +47,7 @@ SpHelpBrowserPresenter class >> defaultSpec [
 { #category : #settings }
 SpHelpBrowserPresenter class >> helpTopicVisitor [
 	
-	^ helpTopicVisitor ifNil: [ helpTopicVisitor := CreateHelpTopic new. ] 
+	^ helpTopicVisitor ifNil: [ helpTopicVisitor := PRVisitor new. ] 
 ]
 
 { #category : #settings }
@@ -71,7 +71,7 @@ SpHelpBrowserPresenter class >> openDoc [
 	working := FileSystem disk workingDirectory/'doc'.
 	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ].
 	visitor := self helpTopicVisitor.
-	^ self openOn: (SystemHelp asHelpTopic addSubtopic: (working acceptVisitor: visitor)) owner.
+	^ self openOn: (visitor visit: working ).
  	
 ]
 
