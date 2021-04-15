@@ -27,6 +27,9 @@ Class {
 		'helpTopicCache',
 		'rootTopic'
 	],
+	#classInstVars : [
+		'helpTopicVisitor'
+	],
 	#category : #'NewTools-HelpBrowser-UI'
 }
 
@@ -41,6 +44,18 @@ SpHelpBrowserPresenter class >> defaultSpec [
 			yourself
 ]
 
+{ #category : #settings }
+SpHelpBrowserPresenter class >> helpTopicVisitor [
+	
+	^ helpTopicVisitor ifNil: [ helpTopicVisitor := CreateHelpTopic new. ] 
+]
+
+{ #category : #settings }
+SpHelpBrowserPresenter class >> helpTopicVisitor: aVisitor [
+	
+	helpTopicVisitor := aVisitor 
+]
+
 { #category : #examples }
 SpHelpBrowserPresenter class >> open [
 	<example>
@@ -52,10 +67,11 @@ SpHelpBrowserPresenter class >> open [
 SpHelpBrowserPresenter class >> openDisc [
 	<example>
 	
-	| working |
+	| working visitor |
 	working := FileSystem disk workingDirectory/'doc'.
-	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ]. 
-	^ self openOn: (SystemHelp asHelpTopic addSubtopic: (working asHelpTopic)) owner.
+	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ].
+	visitor := self helpTopicVisitor.
+	^ self openOn: (SystemHelp asHelpTopic addSubtopic: (working acceptVisitor: visitor)) owner.
  	
 ]
 
