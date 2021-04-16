@@ -28,7 +28,8 @@ Class {
 		'rootTopic'
 	],
 	#classInstVars : [
-		'helpTopicVisitor'
+		'helpTopicVisitor',
+		'doc'
 	],
 	#category : #'NewTools-HelpBrowser-UI'
 }
@@ -42,6 +43,15 @@ SpHelpBrowserPresenter class >> defaultSpec [
 				add: #textOutput;
 				yourself);
 			yourself
+]
+
+{ #category : #parsing }
+SpHelpBrowserPresenter class >> doc [
+
+	| working |
+	working := FileSystem disk workingDirectory / 'doc'.
+	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ].
+	^ working
 ]
 
 { #category : #settings }
@@ -67,11 +77,9 @@ SpHelpBrowserPresenter class >> open [
 SpHelpBrowserPresenter class >> openDoc [
 	<example>
 	
-	| working visitor |
-	working := FileSystem disk workingDirectory/'doc'.
-	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ].
+	| visitor |
 	visitor := self helpTopicVisitor.
-	^ self openOn: (visitor visit: working ).
+	^ self openOn: (visitor visit: self doc ).
  	
 ]
 
