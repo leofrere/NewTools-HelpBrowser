@@ -34,23 +34,36 @@ SpHelpBrowserPresenterTest >> setUp [
 { #category : #tests }
 SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenADirectory [
 
-	| directory file visitor spPresenter |
+	| directory visitor spPresenter |
 	[ directory := filesystem workingDirectory / self class SpDirectoryName.
 	filesystem createDirectory: self class SpDirectoryName.
-	(file := directory / self class SpFileName) 
-		writeStreamDo: [ :stream | stream nextPutAll: self class SpFileContents ].
-	
+		
 	visitor := SpHelpBrowserPresenter helpTopicVisitor.
 	spPresenter := SpHelpBrowserPresenter openOn: (visitor visit: directory).
 	self assert: directory exists.
 	self assert: spPresenter rootTopic title equals: directory basenameWithoutExtension.
-	self assert: file exists.
-	self assert: (spPresenter rootTopic subtopics at: 1) title equals: file basenameWithoutExtension.
-	self assert: (spPresenter rootTopic subtopics at: 1) contents equals: file contents ]
+	spPresenter delete ]
 		ensure: [ filesystem workingDirectory ensureDeleteAllChildren ]
-	"
-	 ]
-		"
+
+]
+
+{ #category : #tests }
+SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenADirectoryWithSubFile [
+
+	| directory subfile visitor spPresenter |
+	[ directory := filesystem workingDirectory / self class SpDirectoryName.
+	filesystem createDirectory: self class SpDirectoryName.
+	(subfile := directory / self class SpFileName) 
+		writeStreamDo: [ :stream | stream nextPutAll: self class SpFileContents ].
+	
+	visitor := SpHelpBrowserPresenter helpTopicVisitor.
+	spPresenter := SpHelpBrowserPresenter openOn: (visitor visit: directory).
+	self assert: subfile exists.
+	self assert: (spPresenter rootTopic subtopics at: 1) title equals: subfile basenameWithoutExtension.
+	self assert: (spPresenter rootTopic subtopics at: 1) contents equals: subfile contents.
+	spPresenter delete ]
+		ensure: [ filesystem workingDirectory ensureDeleteAllChildren ]
+
 ]
 
 { #category : #tests }
@@ -64,6 +77,7 @@ SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenAFile [
 	spPresenter := SpHelpBrowserPresenter openOn: (visitor visit: file).
 	self assert: file exists.
 	self assert: spPresenter rootTopic title equals: file basenameWithoutExtension.
-	self assert: spPresenter rootTopic contents equals: file contents ]
+	self assert: spPresenter rootTopic contents equals: file contents.
+	spPresenter delete ]
 		ensure: [ filesystem workingDirectory ensureDeleteAllChildren ]
 ]
