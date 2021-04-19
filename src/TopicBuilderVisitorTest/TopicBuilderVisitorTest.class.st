@@ -27,7 +27,18 @@ blabla'
 ]
 
 { #category : #resources }
-TopicBuilderVisitorTest class >> spFileContentsWithSubSection [
+TopicBuilderVisitorTest class >> spFileContentsWithMoreSubSection [
+
+	^ '# Section 1
+blabla1
+## Section 2
+blabla2
+## Section 3
+blabla3'
+]
+
+{ #category : #resources }
+TopicBuilderVisitorTest class >> spFileContentsWithOneSubSection [
 
 	^ '# Section 1
 blabla1
@@ -61,6 +72,19 @@ TopicBuilderVisitorTest >> testTopicBuilderWithMoreSections [
 ]
 
 { #category : #tests }
+TopicBuilderVisitorTest >> testTopicBuilderWithMoreSubSection [
+
+	| file visitor|
+	 (file := filesystem workingDirectory / self class spFileName) 
+		writeStreamDo: [ :stream | stream nextPutAll: self class spFileContentsWithMoreSubSection ].
+	visitor := TopicBuilderVisitor new.
+	visitor start:  (MicroDownParser parse: file) asPillar.
+	self assert:  ((visitor rootTopic at: 1) subtopics at: 2) title equals: 'Section 3'.
+	self assert:  ((visitor rootTopic at: 1) subtopics at: 2) contents equals: 'blabla3' , Character cr asString.
+	self assert: visitor rootTopic size equals: 1
+]
+
+{ #category : #tests }
 TopicBuilderVisitorTest >> testTopicBuilderWithOneSection [
 
 	| file visitor text |
@@ -77,11 +101,11 @@ blabla
 ]
 
 { #category : #tests }
-TopicBuilderVisitorTest >> testTopicBuilderWithSubSection [
+TopicBuilderVisitorTest >> testTopicBuilderWithOneSubSection [
 
 	| file visitor|
 	 (file := filesystem workingDirectory / self class spFileName) 
-		writeStreamDo: [ :stream | stream nextPutAll: self class spFileContentsWithSubSection ].
+		writeStreamDo: [ :stream | stream nextPutAll: self class spFileContentsWithOneSubSection ].
 	visitor := TopicBuilderVisitor new.
 	visitor start:  (MicroDownParser parse: file) asPillar.
 	self assert:  ((visitor rootTopic at: 1) subtopics at: 1) title equals: 'Section 2'.

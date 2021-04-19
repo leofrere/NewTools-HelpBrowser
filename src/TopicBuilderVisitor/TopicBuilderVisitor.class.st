@@ -85,8 +85,7 @@ TopicBuilderVisitor >> visitAll: aCollection [
 TopicBuilderVisitor >> visitHeader: anObject [
 	(anObject level) > actualTopic 	
 		ifTrue: 
-			[ actualTopic := (anObject level).
-			(helpTopic at:  helpTopic size) addSubtopic:  ((((self class with: actualTopic)  visitHeader: anObject) at: 1) rootTopic at: 1) ]	
+			[ (helpTopic at:  helpTopic size) addSubtopic:  ((((self class with: anObject level)  visitHeader: anObject) at: 1) rootTopic at: 1) ]	
 		 ifFalse: 
 			[ actualTopic := (anObject level).
 			helpTopic add: (HelpTopic named: anObject text) ].
