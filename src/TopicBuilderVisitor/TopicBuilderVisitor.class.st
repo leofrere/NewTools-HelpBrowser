@@ -76,8 +76,7 @@ TopicBuilderVisitor >> visitAll: aCollection [
 
 	text := Text new .
 	^ aCollection collect: [ :each | 
-		each class = PRHeader ifTrue: [ contentsList add: text. text := Text new ] ifFalse: [ text := text , (PRRichTextComposer new start: each). ].
-		 self visit: each ].
+		each class = PRHeader ifTrue: [ contentsList add: text. text := Text new. self visit: each ] ifFalse: [ text := text , (PRRichTextComposer new start: each). ] ].
 	"^aCollection collect: [ :each | self halt . self visit: each ]"
 	
 ]
@@ -86,11 +85,11 @@ TopicBuilderVisitor >> visitAll: aCollection [
 TopicBuilderVisitor >> visitHeader: anObject [
 	(anObject level) > actualTopic 	
 		ifTrue: 
-			[ (helpTopic at:  helpTopic size) addSubtopic:  ((((self class with: anObject level)  visitHeader: anObject) at: 1) rootTopic at: 1) ]	
+			[ (helpTopic at:  helpTopic size) addSubtopic:  (((self class with: anObject level)  visitHeader: anObject) rootTopic at: 1) ]	
 		 ifFalse: 
 			[ actualTopic := (anObject level).
 			helpTopic add: (HelpTopic named: anObject text) ].
-	^ super visitHeader:  anObject
+	"^ super visitHeader:  anObject"
 ]
 
 { #category : #'visiting-document' }
