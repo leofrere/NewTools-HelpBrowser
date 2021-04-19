@@ -49,15 +49,17 @@ SpHelpBrowserPresenter class >> defaultSpec [
 SpHelpBrowserPresenter class >> doc [
 
 	| working |
+	
 	working := FileSystem disk workingDirectory / 'doc'.
 	working isDirectory ifFalse: [ FileSystem disk createDirectory: 'doc' ].
-	^ working
+	^ self topicFileSystem: working
 ]
 
 { #category : #settings }
 SpHelpBrowserPresenter class >> helpTopicVisitor [
 	
-	^ helpTopicVisitor ifNil: [ helpTopicVisitor := PRVisitor new. ] 
+	helpTopicVisitor ifNil: [ ^ helpTopicVisitor := TopicBuilderVisitor new. ].
+	^ helpTopicVisitor new
 ]
 
 { #category : #settings }
@@ -79,7 +81,7 @@ SpHelpBrowserPresenter class >> openDoc [
 	
 	| visitor |
 	visitor := self helpTopicVisitor.
-	^ self openOn: (visitor visit: self doc ).
+	^ self openOn: self doc .
  	
 ]
 
@@ -92,6 +94,21 @@ SpHelpBrowserPresenter class >> openOn: aHelpTopic [
 	^ (self on: aHelpTopic)
 			openWithSpec;
 			yourself
+]
+
+{ #category : #'as yet unclassified' }
+SpHelpBrowserPresenter class >> topicFileSystem: aFileSystem [
+
+	| topic visitor subTopic |
+	
+	aFileSystem isFile ifTrue: [ 
+		visitor := self helpTopicVisitor.
+		visitor start: (MicroDownParser parse: aFileSystem) asPillar.
+		^ (HelpTopic named: aFileSystem basenameWithoutExtension) subtopics:  (visitor rootTopic) ].
+	
+	topic := HelpTopic named: aFileSystem basenameWithoutExtension.
+	subTopic := aFileSystem children do: [ :each | topic addSubtopic: (self topicFileSystem: each) ].
+	^ topic
 ]
 
 { #category : #initialization }
