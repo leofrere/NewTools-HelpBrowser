@@ -21,7 +21,8 @@ blabla2
 TopicBuilderVisitorTest class >> spFileContentsOneSection [
 
 	^ '# Section 1
-__blabla__
+	
+_blabla_
 blabla
 
 ```
@@ -92,7 +93,7 @@ TopicBuilderVisitorTest >> testTopicBuilderWithMoreSubSection [
 TopicBuilderVisitorTest >> testTopicBuilderWithOneSection [
 
 	| file visitor text |
-	text := 'blabla
+	text := '_blabla_
 blabla
 '.
 	 (file := filesystem workingDirectory / self class spFileName) 
