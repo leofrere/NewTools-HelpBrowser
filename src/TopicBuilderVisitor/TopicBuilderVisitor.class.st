@@ -95,9 +95,3 @@ TopicBuilderVisitor >> visitHeader: anObject [
 			helpTopic add: (HelpTopic named: anObject text) ].
 	"^ super visitHeader:  anObject"
 ]
-
-{ #category : #'visiting-document' }
-TopicBuilderVisitor >> visitParagraph: anObject [
-
-	^ self visitDocumentGroup: anObject
-]
