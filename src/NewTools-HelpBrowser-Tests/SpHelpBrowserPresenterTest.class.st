@@ -8,19 +8,20 @@ Class {
 }
 
 { #category : #resources }
-SpHelpBrowserPresenterTest class >> SpDirectoryName [
+SpHelpBrowserPresenterTest class >> spDirectoryName [
 
 	^ 'tests'
 ]
 
 { #category : #resources }
-SpHelpBrowserPresenterTest class >> SpFileContents [
+SpHelpBrowserPresenterTest class >> spFileContentsOneSection [
 
-	^ 'This is a test on `SpHelpBrowserPresenterTest`'
+	^ '# Section 1
+This is a test'
 ]
 
 { #category : #resources }
-SpHelpBrowserPresenterTest class >> SpFileName [
+SpHelpBrowserPresenterTest class >> spFileName [
 
 	^ 'test.md'
 ]
@@ -34,15 +35,13 @@ SpHelpBrowserPresenterTest >> setUp [
 { #category : #tests }
 SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenADirectory [
 
-	| directory visitor spPresenter |
-	[ directory := filesystem workingDirectory / self class SpDirectoryName.
-	filesystem createDirectory: self class SpDirectoryName.
+	| directory topic |
+	[ directory := filesystem workingDirectory / self class spDirectoryName.
+	filesystem createDirectory: self class spDirectoryName.
 		
-	visitor := SpHelpBrowserPresenter helpTopicVisitor.
-	spPresenter := SpHelpBrowserPresenter openOn: (visitor visit: directory).
+	topic := SpHelpBrowserPresenter topicFileSystem: directory.
 	self assert: directory exists.
-	self assert: spPresenter rootTopic title equals: directory basenameWithoutExtension.
-	spPresenter delete ]
+	self assert: topic title equals: directory basenameWithoutExtension ]
 		ensure: [ filesystem workingDirectory ensureDeleteAllChildren ]
 
 ]
@@ -50,34 +49,15 @@ SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenADirectory [
 { #category : #tests }
 SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenADirectoryWithSubFile [
 
-	| directory subfile visitor spPresenter |
-	[ directory := filesystem workingDirectory / self class SpDirectoryName.
-	filesystem createDirectory: self class SpDirectoryName.
-	(subfile := directory / self class SpFileName) 
-		writeStreamDo: [ :stream | stream nextPutAll: self class SpFileContents ].
+	| directory subfile topic|
+	[ directory := filesystem workingDirectory / self class spDirectoryName.
+	filesystem createDirectory: self class spDirectoryName.
+	(subfile := directory / self class spFileName) 
+		writeStreamDo: [ :stream | stream nextPutAll: self class spFileContentsOneSection ].
 	
-	visitor := SpHelpBrowserPresenter helpTopicVisitor.
-	spPresenter := SpHelpBrowserPresenter openOn: (visitor visit: directory).
-	self assert: subfile exists.
-	self assert: (spPresenter rootTopic subtopics at: 1) title equals: subfile basenameWithoutExtension.
-	self assert: (spPresenter rootTopic subtopics at: 1) contents equals: subfile contents.
-	spPresenter delete ]
+	topic := SpHelpBrowserPresenter topicFileSystem: directory.
+	self assert: directory exists.
+	self assert: (topic subtopics at: 1) title equals: subfile basenameWithoutExtension ]
 		ensure: [ filesystem workingDirectory ensureDeleteAllChildren ]
 
-]
-
-{ #category : #tests }
-SpHelpBrowserPresenterTest >> testSpHelpBrowserPresenterOpenAFile [
-
-	| file visitor spPresenter |
-	[ (file := filesystem workingDirectory / self class SpFileName) 
-		writeStreamDo: [ :stream | stream nextPutAll: self class SpFileContents ].
-	
-	visitor := SpHelpBrowserPresenter helpTopicVisitor.
-	spPresenter := SpHelpBrowserPresenter openOn: (visitor visit: file).
-	self assert: file exists.
-	self assert: spPresenter rootTopic title equals: file basenameWithoutExtension.
-	self assert: spPresenter rootTopic contents equals: file contents.
-	spPresenter delete ]
-		ensure: [ filesystem workingDirectory ensureDeleteAllChildren ]
 ]

@@ -79,8 +79,6 @@ SpHelpBrowserPresenter class >> open [
 SpHelpBrowserPresenter class >> openDoc [
 	<example>
 	
-	| visitor |
-	visitor := self helpTopicVisitor.
 	^ self openOn: self doc .
  	
 ]
