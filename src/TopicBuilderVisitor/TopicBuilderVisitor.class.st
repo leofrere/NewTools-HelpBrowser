@@ -3,9 +3,10 @@ Class {
 	#superclass : #PRVisitor,
 	#instVars : [
 		'helpTopic',
-		'actualTopic',
+		'actualLevel',
 		'contentsList',
-		'text'
+		'text',
+		'textComposer'
 	],
 	#category : #TopicBuilderVisitor
 }
@@ -15,17 +16,17 @@ TopicBuilderVisitor class >> with: aActualTopic [
 	
 	| visitor |
 	visitor := self new.
-	visitor actualTopic: aActualTopic.
+	visitor actualLevel: aActualTopic.
 	^ visitor 
 ]
 
 { #category : #accessing }
-TopicBuilderVisitor >> actualTopic: aActualTopic [
+TopicBuilderVisitor >> actualLevel: aActualLevel [
 
-	actualTopic := aActualTopic
+	actualLevel := aActualLevel
 ]
 
-{ #category : #visiting }
+{ #category : #accessing }
 TopicBuilderVisitor >> addContents: aSubtopicsCollection [
 	
 	aSubtopicsCollection ifNotNil: [ aSubtopicsCollection do: 
@@ -40,7 +41,7 @@ TopicBuilderVisitor >> initialize [
 	super initialize.
 	helpTopic := LinkedList new.
 	contentsList := LinkedList new.
-	actualTopic := 1.
+	actualLevel := 1.
 ]
 
 { #category : #accessing }
@@ -61,14 +62,16 @@ TopicBuilderVisitor >> start: anObject [
 	
 ]
 
-{ #category : #visiting }
-TopicBuilderVisitor >> text: aPRElement [
-	
-	| text |
-	text := ''.
-	(aPRElement class = PRText) ifFalse: [ aPRElement children do: 
-		[ :each | text := text , (self text: each)] ] ifTrue: [ text :=aPRElement text ].
-	^ text
+{ #category : #accessing }
+TopicBuilderVisitor >> textComposer [
+
+	^ textComposer ifNil: [ textComposer := PRRichTextComposer new ].
+]
+
+{ #category : #accessing }
+TopicBuilderVisitor >> textComposer: aPRVisitorClass [
+
+	textComposer := aPRVisitorClass new
 ]
 
 { #category : #'visiting-document' }
@@ -76,24 +79,25 @@ TopicBuilderVisitor >> visitAll: aCollection [
 
 	text := Text new .
 	^ aCollection collect: [ :each | 
-		each class = PRHeader ifTrue: [ contentsList add: text. text := Text new. self visit: each ] ifFalse: [ text := text , (PRRichTextComposer new start: each). ] ].
-	"^aCollection collect: [ :each | self halt . self visit: each ]"
+		each class = PRHeader ifTrue: [ contentsList add: text. text := Text new. self visit: each ] ifFalse: [ text := text , (self textComposer start: each). ] ].
+
 	
 ]
 
 { #category : #'visiting-document' }
 TopicBuilderVisitor >> visitHeader: anObject [
-	(anObject level) > actualTopic 	
+
+	(anObject level) > actualLevel 	
 		ifTrue: 
 			[ (helpTopic at:  helpTopic size) addSubtopic:  (((self class with: anObject level)  visitHeader: anObject) rootTopic at: 1) ]	
 		 ifFalse: 
-			[ actualTopic := (anObject level).
+			[ actualLevel := (anObject level).
 			helpTopic add: (HelpTopic named: anObject text) ].
 	"^ super visitHeader:  anObject"
 ]
 
 { #category : #'visiting-document' }
 TopicBuilderVisitor >> visitParagraph: anObject [
-	"contentsList add: (PRRichTextComposer new start: anObject)."
+
 	^ self visitDocumentGroup: anObject
 ]

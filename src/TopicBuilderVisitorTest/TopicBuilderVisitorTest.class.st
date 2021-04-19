@@ -20,14 +20,9 @@ blabla2
 { #category : #resources }
 TopicBuilderVisitorTest class >> spFileContentsOneSection [
 
-	^ '# Section 1
-	
+	^ '# Section 1	
 _blabla_
-blabla
-
-```
-	this is a code bloc
-```'
+blabla'
 
 ]
 
@@ -73,7 +68,7 @@ TopicBuilderVisitorTest >> testTopicBuilderWithMoreSections [
 	visitor := TopicBuilderVisitor new.
 	visitor start:  (MicroDownParser parse: file) asPillar.
 	self assert:  (visitor rootTopic at: 2) title equals: 'Section 2'.
-	self assert:  (visitor rootTopic at: 2) contents equals: 'blabla2', Character cr asString
+	self assert:  (visitor rootTopic at: 2) contents asString equals: Character cr asString, 'blabla2', Character cr asString
 ]
 
 { #category : #tests }
@@ -85,7 +80,7 @@ TopicBuilderVisitorTest >> testTopicBuilderWithMoreSubSection [
 	visitor := TopicBuilderVisitor new.
 	visitor start:  (MicroDownParser parse: file) asPillar.
 	self assert:  ((visitor rootTopic at: 1) subtopics at: 2) title equals: 'Section 3'.
-	self assert:  ((visitor rootTopic at: 1) subtopics at: 2) contents equals: 'blabla3' , Character cr asString.
+	self assert:  ((visitor rootTopic at: 1) subtopics at: 2) contents asString equals: Character cr asString , 'blabla3' , Character cr asString.
 	self assert: visitor rootTopic size equals: 1
 ]
 
@@ -93,16 +88,16 @@ TopicBuilderVisitorTest >> testTopicBuilderWithMoreSubSection [
 TopicBuilderVisitorTest >> testTopicBuilderWithOneSection [
 
 	| file visitor text |
-	text := '_blabla_
+	text := '
+blabla
 blabla
 '.
 	 (file := filesystem workingDirectory / self class spFileName) 
 		writeStreamDo: [ :stream | stream nextPutAll: self class spFileContentsOneSection ].
 	visitor := TopicBuilderVisitor new.
 	visitor start:  (MicroDownParser parse: file) asPillar.
-	self halt.
 	self assert:  (visitor rootTopic at: 1) title equals: 'Section 1'.
-	"self assert:  (visitor rootTopic at: 1) contents equals: text."
+	self assert:  (visitor rootTopic at: 1) contents asString equals: text.
 	self assert: visitor rootTopic size equals: 1
 ]
 
@@ -115,6 +110,6 @@ TopicBuilderVisitorTest >> testTopicBuilderWithOneSubSection [
 	visitor := TopicBuilderVisitor new.
 	visitor start:  (MicroDownParser parse: file) asPillar.
 	self assert:  ((visitor rootTopic at: 1) subtopics at: 1) title equals: 'Section 2'.
-	self assert:  ((visitor rootTopic at: 1) subtopics at: 1) contents equals: 'blabla2' , Character cr asString.
+	self assert:  ((visitor rootTopic at: 1) subtopics at: 1) contents asString equals: Character cr asString , 'blabla2' , Character cr asString.
 	self assert: visitor rootTopic size equals: 1
 ]
