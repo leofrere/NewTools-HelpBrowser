@@ -21,8 +21,12 @@ blabla2
 TopicBuilderVisitorTest class >> spFileContentsOneSection [
 
 	^ '# Section 1
+__blabla__
 blabla
-blabla'
+
+```
+	this is a code bloc
+```'
 
 ]
 
@@ -95,8 +99,9 @@ blabla
 		writeStreamDo: [ :stream | stream nextPutAll: self class spFileContentsOneSection ].
 	visitor := TopicBuilderVisitor new.
 	visitor start:  (MicroDownParser parse: file) asPillar.
+	self halt.
 	self assert:  (visitor rootTopic at: 1) title equals: 'Section 1'.
-	self assert:  (visitor rootTopic at: 1) contents equals: text.
+	"self assert:  (visitor rootTopic at: 1) contents equals: text."
 	self assert: visitor rootTopic size equals: 1
 ]
 

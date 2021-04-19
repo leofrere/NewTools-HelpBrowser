@@ -50,7 +50,6 @@ TopicBuilderVisitor >> rootTopic [
 
 { #category : #visiting }
 TopicBuilderVisitor >> start: anObject [
-
 	self visit: anObject.
 	contentsList add: text.
 	contentsList removeFirst.
@@ -74,10 +73,12 @@ TopicBuilderVisitor >> text: aPRElement [
 
 { #category : #'visiting-document' }
 TopicBuilderVisitor >> visitAll: aCollection [
-	text := ''.
+
+	text := Text new .
 	^ aCollection collect: [ :each | 
-		each class = PRHeader ifTrue: [ contentsList add: text. text := '' ] ifFalse: [ text := text , (each text) , (Character cr) asString  ].
+		each class = PRHeader ifTrue: [ contentsList add: text. text := Text new ] ifFalse: [ text := text , (PRRichTextComposer new start: each). ].
 		 self visit: each ].
+	"^aCollection collect: [ :each | self halt . self visit: each ]"
 	
 ]
 
@@ -94,6 +95,6 @@ TopicBuilderVisitor >> visitHeader: anObject [
 
 { #category : #'visiting-document' }
 TopicBuilderVisitor >> visitParagraph: anObject [
-	"contentsList add: (anObject)."
+	"contentsList add: (PRRichTextComposer new start: anObject)."
 	^ self visitDocumentGroup: anObject
 ]
